@@ -6,3 +6,4 @@ help.txt
 examples.py
 backend/test_db.d
 backend/.pytest_cache
+backend/sql_app.db

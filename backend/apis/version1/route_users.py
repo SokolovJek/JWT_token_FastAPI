@@ -8,6 +8,7 @@ from db.repository.users import create_new_user, retrieve_user
 from db.base import User
 from apis.version1.route_authenticated import get_current_user_from_token
 
+
 router = APIRouter()
 
 
@@ -34,7 +35,7 @@ def show_user_by_id(id_user: int,
     if user.id == current_user.id or current_user.is_superuser:
         return user
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail=f"Вам не разрешено просмптривать пользователя с id № {id_user},"
+                        detail=f"Вам не разрешено просматривать пользователя с id № {id_user},"
                                f" так как вы не владелец учетной записи № {id_user}!!!!"
                         )
 

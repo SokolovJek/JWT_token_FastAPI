@@ -9,7 +9,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     """
     генерация токена JWT
     :param data: словарь с данными (sub)
-    :param expires_delta: время истечения токкена
+    :param expires_delta: время истечения токена
     :return: токен
     """
     to_encode = data.copy()
@@ -22,12 +22,17 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-def create_refresh_token(email: str):
+def create_refresh_token(email: str, hash_to_logout: str = None):
     """
-    Создание refresh_token
+    Создание refresh_token с hash_to_logout
     """
-    expires = timedelta(days=1)
-    return create_access_token(data={'sub': email}, expires_delta=expires)
+    expires = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+
+    data = {"sub": email}
+    if hash_to_logout:
+        data["hash_to_logout"] = hash_to_logout
+
+    return create_access_token(data=data, expires_delta=expires)
 
 
 def decode_token(token: str, secret_key: str, algorithm: str):

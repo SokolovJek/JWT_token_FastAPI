@@ -1,5 +1,6 @@
 from passlib.context import CryptContext
 
+
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
@@ -32,7 +33,7 @@ class Hasher:
     def get_hash_to_realize_function_logout(data: str):
         """
         Создает хэша для end-point /logout
-        :param data: str = даные для хеша
+        :param data: str = данные для хеша
         :return: str = хэш из пароля
         """
         return pwd_context.hash(data)

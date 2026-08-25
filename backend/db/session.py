@@ -8,17 +8,16 @@ SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # если нужна sqlite
-
-# SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
-# engine = create_engine(
-#     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-# )
+SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-# задел на будующее
+# задел на будущее
 def get_db() -> Generator:
     """
     во время тестирования переопределяем этот 'get_db' для подключения к другой БД.
