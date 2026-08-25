@@ -1,8 +1,3 @@
-"""
-Поскольку мы используем шаблон репозитория и хотим чтобы логика формы базы данных была полностью отделена от
-логики маршрутов fastapi, создаем функцию «create_new_user» для логики создания user.
-Сдесь хранится БИЗНЕС-ЛОГИКА
-"""
 from sqlalchemy.orm import Session
 
 from schemas.users import UserCreate
@@ -39,3 +34,35 @@ def retrieve_user(id_user: int, db: Session):
     """
     item = db.query(User).filter(User.id == id_user).first()
     return item
+
+
+def get_user_by_username(username: str, db: Session) -> User:
+    """Получение пользователя по username"""
+    return db.query(User).filter(User.username == username).first()
+
+
+def get_all_users(db: Session, skip: int = 0, limit: int = 100) -> list[User]:
+    """Получение всех пользователей с пагинацией"""
+    return db.query(User).offset(skip).limit(limit).all()
+
+
+def update_user(user_id: int, user_data: dict, db: Session) -> User:
+    """Обновление данных пользователя"""
+    user = retrieve_user(id_user=user_id, db=db)
+    if user:
+        for key, value in user_data.items():
+            if hasattr(user, key):
+                setattr(user, key, value)
+        db.commit()
+        db.refresh(user)
+    return user
+
+
+def delete_user(user_id: int, db: Session) -> bool:
+    """Удаление пользователя"""
+    user = retrieve_user(id_user=user_id, db=db)
+    if user:
+        db.delete(user)
+        db.commit()
+        return True
+    return False

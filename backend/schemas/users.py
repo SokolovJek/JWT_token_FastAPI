@@ -1,26 +1,44 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, validator, Field
 from typing import Optional
 
-
-# указываем свойства, необходимые при создании пользователя.
 class UserCreate(BaseModel):
-    """
-    Валидация данных
-    """
-    username: str
+    username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=6)
+
+    @validator('username')
+    def validate_username(cls, v):
+        if not v.isalnum() and '_' not in v:
+            raise ValueError('Username должен содержать только буквы, цифры и _')
+        return v
 
 
-# модель ответа сервера на запрос 'POST http://127.0.0.1:8000/users/{id_user}'
+class UserUpdate(BaseModel):
+    """Схема для обновления пользователя"""
+    username: Optional[str] = Field(None, min_length=3, max_length=50)
+    email: Optional[EmailStr] = None
+    password: Optional[str] = Field(None, min_length=6)
+    is_active: Optional[bool] = None
+    is_superuser: Optional[bool] = None
+
+    @validator('username')
+    def validate_username(cls, v):
+        if v is None:
+            return v
+        if not v.isalnum() and '_' not in v:
+            raise ValueError('Username должен содержать только буквы, цифры и _')
+        return v
+
+    class Config:
+        from_attributes = True
+
+
 class ShowUser(BaseModel):
-    """
-    Явно указываем что будет возвращенно пользователю.
-    Убираем и ответа поля: hash_password и is_superuser
-    """
+    id: int
     username: str
     email: EmailStr
     is_active: bool
+    is_superuser: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
